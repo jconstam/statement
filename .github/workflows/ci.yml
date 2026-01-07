@@ -14,8 +14,8 @@ jobs:
 #     with:
 #       extra_ignore_paths: hw-ops
 
-  check_format_python:
-    name: Check Python Formatting
+  format_python:
+    name: Validate Python Formatting
     runs-on: ubuntu-24.04
     steps:
         - name: Checkout
@@ -25,11 +25,27 @@ jobs:
           with:
             python-version: '3.12'
         - name: Setup Virtual Environment
-          run: make setup_venv_force
-        - name: Run Formatter
           run: |
+            make setup_venv_force
             source .venv/bin/activate
-            make format_python_ci
+        - name: Run Formatter
+          run: make format_python_ci
+  lint_python:
+    name: Run Python Linter
+    runs-on: ubuntu-24.04
+    steps:
+        - name: Checkout
+          uses: actions/checkout@v6
+        - name: Set up Python 3.12
+          uses: actions/setup-python@v6
+          with:
+            python-version: '3.12'
+        - name: Setup Virtual Environment
+          run: |
+            make setup_venv_force
+            source .venv/bin/activate
+        - name: Run Linter
+          run: make lint_python_ci
 
 #   python_type_check:
 #     name: Python Type Check
