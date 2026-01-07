@@ -20,8 +20,16 @@ jobs:
     steps:
         - name: Checkout
           uses: actions/checkout@v6
+        - name: Set up Python 3.12
+          uses: actions/setup-python@v6
+          with:
+            python-version: '3.12'
+        - name: Setup Virtual Environment
+          run: make setup_venv_force
         - name: Run Formatter
-          run: make format_python_ci
+          run: |
+            source .venv/bin/activate
+            make format_python_ci
 
 #   python_type_check:
 #     name: Python Type Check
