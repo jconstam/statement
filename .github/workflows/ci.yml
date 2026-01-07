@@ -41,8 +41,6 @@ jobs:
           with:
             python-version: '3.12'
         - name: Setup Virtual Environment
-          run: source .venv/bin/activate
-        - name: Setup Virtual Environment
           run: make setup_venv_force
         - name: Run Linter
           run: |
