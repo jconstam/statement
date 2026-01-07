@@ -1,0 +1,7 @@
+[run]
+branch = True
+omit = ./src/main.py, ./tests/*
+
+[report]
+fail_under = 100
+sort = cover

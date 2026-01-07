@@ -43,26 +43,58 @@ delete_venv:
 	@echo "Deleting virtual environment"
 	@rm -rf ${VENV_PATH}
 
-## lint: Runs the linter.
-.PHONY: lint
-lint: format
-	@echo "Running linter..."
+## lint_python : Runs the linter.
+.PHONY: lint_python
+lint_python : format_python
+	@echo "Running Python linter..."
 	@ruff check --fix
 
-## format: Formats the code.
-.PHONY: format
-format:
-	@echo "Formatting code..."
-	@ruff format
+## format_python: Formats the code.
+.PHONY: format_python
+format_python:
+	@echo "Formatting Python code..."
+	@ruff format --line-length 160
 
-## lint_for_ci: Runs the linter without fixing anything for CI.
-.PHONY: lint_for_ci
-lint_for_ci:
-	@echo "Running linter..."
+## lint_python_ci: Runs the linter without fixing anything for CI.
+.PHONY: lint_python_ci
+lint_python_ci:
+	@$(call print_line)
+	@echo "Running Python linter (no fixes)..."
 	@ruff check
 
-## format_for_ci: Runs the formatter without fixing anything for CI.
-.PHONY: format_for_ci
-format_for_ci:
-	@echo "Running linter..."
-	@ruff format --check
+## format_python_ci: Runs the formatter without fixing anything for CI.
+.PHONY: format_python_ci
+format_python_ci:
+	@$(call print_line)
+	@echo "Running Python formatter (no fixes)..."
+	@ruff format --check --line-length 160
+
+## lint_bash: Runs the linter to check code style and quality.
+.PHONY: lint_bash
+lint_bash:
+	@$(call print_line)
+	@echo "Running Bash linter..."
+	@shellcheck --color=always --external-sources --shell=bash --severity=style scripts/*.sh
+
+## type_check_python: Runs the type checker to validate type annotations.
+.PHONY: type_check_python
+type_check_python:
+	@$(call print_line)
+	@echo "Running Python type checker..."
+	@mypy src/*.py src/statement/*.py src/test/*.py --warn-redundant-casts --warn-unused-ignores --warn-unreachable --disallow-untyped-defs \
+		--disallow-incomplete-defs  --disallow-untyped-decorators --disallow-redefinition --disallow-untyped-globals --disable-error-code=method-assign \
+    	--follow-untyped-imports --check-untyped-defs --strict-equality
+
+## test_python: Runs the unit tests to validate code functionality.
+.PHONY: test_python
+test_python:
+	@$(call print_line)
+	@echo "Running unit tests..."
+	@pytest --cache-clear --cov-report term --cov=statement  src/test
+
+## test_ci: Runs all CI tests including linters, type checker, and unit tests.
+.PHONY: test_ci
+test_ci: format_python_ci lint_python_ci lint_bash type_check_python test_python
+	@$(call print_line)
+	@echo "All tests passed!"
+	@$(call print_line)

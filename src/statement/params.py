@@ -22,16 +22,10 @@ class StatementParams:
             raise argparse.ArgumentError(None, f'Path "{file_name}" not found')
 
     def __init__(self, raw_args: list) -> None:
-        parser = argparse.ArgumentParser(
-            description="STATEMENT\nState Machine Generator"
-        )
-        parser.add_argument(
-            "-f",
-            "--config_file",
-            type=self._path_t,
-            required=True,
-            help="Configuration file containing the definition of the state machine",
-        )
+        self.config_file = ""
+
+        parser = argparse.ArgumentParser(description="STATEMENT\nState Machine Generator")
+        parser.add_argument("-f", "--config_file", type=self._path_t, required=True, help="Configuration file containing the definition of the state machine")
 
         # This does seem a bit obtuse.
         # First we convert the namespace we get from argparse to a dictionary using the vars method.
