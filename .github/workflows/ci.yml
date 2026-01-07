@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Validate Python Formatting
-        uses: ./.github/actions/python_venv/action.yml
+        uses: ./.github/actions/python_venv
         with:
           makefile_target: format_python_ci
 
@@ -28,7 +28,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Validate Python Formatting
-        uses: ./.github/actions/python_venv/action.yml
+        uses: ./.github/actions/python_venv
         with:
           makefile_target: lint_python_ci
 
