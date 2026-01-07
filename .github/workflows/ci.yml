@@ -18,19 +18,23 @@ jobs:
     name: Validate Python Formatting
     runs-on: ubuntu-24.04
     steps:
-      - name: Validate Python Formatting
-        uses: ./.github/actions/python_venv
-        with:
-          makefile_target: format_python_ci
+    - name: Checkout
+      uses: actions/checkout@v6
+    - name: Validate Python Formatting
+      uses: ./.github/actions/python_venv
+      with:
+        makefile_target: format_python_ci
 
   lint_python:
     name: Run Python Linter
     runs-on: ubuntu-24.04
     steps:
-      - name: Validate Python Formatting
-        uses: ./.github/actions/python_venv
-        with:
-          makefile_target: lint_python_ci
+    - name: Checkout
+      uses: actions/checkout@v6
+    - name: Validate Python Formatting
+      uses: ./.github/actions/python_venv
+      with:
+        makefile_target: lint_python_ci
 
 #   python_type_check:
 #     name: Python Type Check
