@@ -6,6 +6,7 @@
         "ms-python.vscode-python-envs",
         "ms-python.vscode-pylance",
         "ms-azuretools.vscode-containers",
-        "mhutchie.git-graph"
+        "mhutchie.git-graph",
+        "github.vscode-github-actions"
     ]
 }
