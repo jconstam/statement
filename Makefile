@@ -96,7 +96,7 @@ type_check_python:
 test_python:
 	@$(call print_line)
 	@echo "Running unit tests..."
-	@pytest --cache-clear --cov-report term --cov=statement  src/test
+	@pytest --cache-clear --cov-report term --cov-report html:.pytest_cov_html --cov=statement  src/test
 
 ## test_ci: Runs all CI tests including linters, type checker, and unit tests.
 .PHONY: test_ci
