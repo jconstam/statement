@@ -1,0 +1,81 @@
+name: CI Build
+
+on:
+  push:
+    branches: [ main* ]
+  pull_request:
+    branches: [ '**' ]
+
+
+jobs:
+  lint_eof_newlines:
+    name: Lint EOF Newlines
+    runs-on: ubuntu-24.04
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v6
+    - name: Lint Bash
+      uses: ./.github/actions/make_target
+      with:
+        makefile_target: check_eof_newlines
+        setup_venv: false
+
+  format_python:
+    name: Validate Python Formatting
+    runs-on: ubuntu-24.04
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v6
+    - name: Validate Python Formatting
+      uses: ./.github/actions/make_target
+      with:
+        makefile_target: format_python_ci
+        setup_venv: true
+
+  lint_python:
+    name: Run Python Linter
+    runs-on: ubuntu-24.04
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v6
+    - name: Lint Python
+      uses: ./.github/actions/make_target
+      with:
+        makefile_target: lint_python_ci
+        setup_venv: true
+
+  type_check_python:
+    name: Check Python Types
+    runs-on: ubuntu-24.04
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v6
+    - name: Lint Python
+      uses: ./.github/actions/make_target
+      with:
+        makefile_target: type_check_python
+        setup_venv: true
+
+  test_python:
+    name: Run Python Unit Tests
+    runs-on: ubuntu-24.04
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v6
+    - name: Lint Python
+      uses: ./.github/actions/make_target
+      with:
+        makefile_target: test_python
+        setup_venv: true
+
+  lint_bash:
+    name: Run Bash Linter
+    runs-on: ubuntu-24.04
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v6
+    - name: Lint Bash
+      uses: ./.github/actions/make_target
+      with:
+        makefile_target: lint_bash
+        setup_venv: false

@@ -17,10 +17,6 @@ class StatementParams:
             raise argparse.ArgumentError(None, f'Path "{value_string}" not found')
         return value_string
 
-    def _validate_path(self, file_name: str) -> None:
-        if not os.path.exists(file_name):
-            raise argparse.ArgumentError(None, f'Path "{file_name}" not found')
-
     def __init__(self, raw_args: list) -> None:
         self.config_file = ""
 
@@ -32,5 +28,3 @@ class StatementParams:
         # Then we use that dictionary to update the class namespace.
         # There doesn't seem to be a way to do this directly.
         self.__dict__.update(vars(parser.parse_args(raw_args)))
-
-        self._validate_path(self.config_file)
