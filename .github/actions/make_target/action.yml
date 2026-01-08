@@ -1,0 +1,28 @@
+name: Run Makefile Target
+description: Runs the specified make target, optionally inside of a Python virtual environment
+inputs:
+  makefile_target:
+    description: Name of the Makefile target to run
+    required: true
+    type: string
+  setup_venv:
+    description: Wether or not to setup a Python virtual environment before
+    required: true
+    type: boolean
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set up Python 3.12
+      uses: actions/setup-python@v6
+      with:
+        python-version: '3.12'
+    - name: Setup Virtual Environment
+      if: ${{ inputs.setup_venv }}
+      shell: bash
+      run: make setup_venv_force
+    - name: Run Target in Virtual Environment
+      shell: bash
+      run: |
+        if [ "${{ inputs.setup_venv }}" == "true" ]; then source .venv/bin/activate fi
+        make ${{ inputs.makefile_target }}

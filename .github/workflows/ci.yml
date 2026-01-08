@@ -21,9 +21,10 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v6
     - name: Validate Python Formatting
-      uses: ./.github/actions/python_venv
+      uses: ./.github/actions/make_target
       with:
         makefile_target: format_python_ci
+        setup_venv: true
 
   lint_python:
     name: Run Python Linter
@@ -31,10 +32,23 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v6
-    - name: Validate Python Formatting
-      uses: ./.github/actions/python_venv
+    - name: Lint Python
+      uses: ./.github/actions/make_target
       with:
         makefile_target: lint_python_ci
+        setup_venv: true
+
+  lint_bash:
+    name: Run Bash Linter
+    runs-on: ubuntu-24.04
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v6
+    - name: Lint Bash
+      uses: ./.github/actions/make_target
+      with:
+        makefile_target: lint_bash
+        setup_venv: true
 
 #   python_type_check:
 #     name: Python Type Check
