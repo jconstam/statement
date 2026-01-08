@@ -24,5 +24,5 @@ runs:
     - name: Run Target in Virtual Environment
       shell: bash
       run: |
-        if [ "${{ inputs.setup_venv }}" == "true" ]; then source .venv/bin/activate fi
+        if [ "${{ inputs.setup_venv }}" == "true" ]; then source .venv/bin/activate; fi
         make ${{ inputs.makefile_target }}
