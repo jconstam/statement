@@ -18,9 +18,8 @@ runs:
       with:
         python-version: '3.12'
     - name: Setup Virtual Environment
-      if: ${{ inputs.setup_venv }}
       shell: bash
-      run: make setup_venv_force
+      run: if [ "${{ inputs.setup_venv }}" == "true" ]; then make setup_venv_force; fi
     - name: Run Target in Virtual Environment
       shell: bash
       run: |
