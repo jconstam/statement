@@ -43,6 +43,12 @@ delete_venv:
 	@echo "Deleting virtual environment"
 	@rm -rf ${VENV_PATH}
 
+## check_eof_newlines: Checks that all non-hidden files end with a newline.
+.PHONY: check_eof_newlines
+check_eof_newlines:
+	@echo "Checking for EOF newlines..."
+	@bash scripts/check_eof_newlines.sh ./
+
 ## lint_python : Runs the linter.
 .PHONY: lint_python
 lint_python : format_python
@@ -94,7 +100,7 @@ test_python:
 
 ## test_ci: Runs all CI tests including linters, type checker, and unit tests.
 .PHONY: test_ci
-test_ci: format_python_ci lint_python_ci lint_bash type_check_python test_python
+test_ci: check_eof_newlines format_python_ci lint_python_ci lint_bash type_check_python test_python
 	@$(call print_line)
 	@echo "All tests passed!"
 	@$(call print_line)

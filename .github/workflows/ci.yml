@@ -8,11 +8,17 @@ on:
 
 
 jobs:
-#   lint_eof_newlines:
-#     name: Lint EOF Newlines
-#     uses: levven-com/hw-ops/.github/workflows/lint-eof-newlines.yml@ci_v12
-#     with:
-#       extra_ignore_paths: hw-ops
+  lint_eof_newlines:
+    name: Lint EOF Newlines
+    runs-on: ubuntu-24.04
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v6
+    - name: Lint Bash
+      uses: ./.github/actions/make_target
+      with:
+        makefile_target: check_eof_newlines
+        setup_venv: false
 
   format_python:
     name: Validate Python Formatting
