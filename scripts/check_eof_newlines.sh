@@ -12,7 +12,7 @@ if [ "$#" -lt 1 ]; then
     exit 1
 fi
 
-ROOT_PATH=$(realpath $1)
+ROOT_PATH=$(realpath "$1")
 if [ ! -d "${ROOT_PATH}" ]; then
     echo "Could not find root path \"${1}\""
     exit 1
@@ -23,8 +23,8 @@ RESULT=0
 FILES=$(find . -type f -not -path '*/.*/*' -not -path '*/__pycache__/*' -not -name '.*')
 for FILE in ${FILES}
 do
-    CHECK=`tail -c 1 ${FILE}`
-    WIDTH=$(($COL - ${#FILE}))
+    CHECK=$(tail -c 1 "${FILE}")
+    WIDTH=$((COL - ${#FILE}))
     if [ "${CHECK}" != "" ]; then
         printf '%s%s%*s%s\n' "${FILE}" "$RED" $WIDTH "[FAIL]" "$NORMAL"
         RESULT=1
@@ -33,7 +33,7 @@ done
 
 if [ "${RESULT}" -eq 0 ]; then
     OUT_STR="All files in ${ROOT_PATH} (except excluded paths) end with a newline."
-    WIDTH=$(($COL - ${#OUT_STR}))
+    WIDTH=$((COL - ${#OUT_STR}))
     printf '%s%s%*s%s\n' "${OUT_STR}" "$GREEN" $WIDTH "[PASS]" "$NORMAL"
 fi
 
