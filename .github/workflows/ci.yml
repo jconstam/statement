@@ -48,7 +48,7 @@ jobs:
       uses: ./.github/actions/make_target
       with:
         makefile_target: lint_bash
-        setup_venv: true
+        setup_venv: false
 
 #   python_type_check:
 #     name: Python Type Check
