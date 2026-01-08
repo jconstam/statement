@@ -38,6 +38,30 @@ jobs:
         makefile_target: lint_python_ci
         setup_venv: true
 
+  type_check_python:
+    name: Check Python Types
+    runs-on: ubuntu-24.04
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v6
+    - name: Lint Python
+      uses: ./.github/actions/make_target
+      with:
+        makefile_target: type_check_python
+        setup_venv: true
+
+  test_python:
+    name: Run Python Unit Tests
+    runs-on: ubuntu-24.04
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v6
+    - name: Lint Python
+      uses: ./.github/actions/make_target
+      with:
+        makefile_target: test_python
+        setup_venv: true
+
   lint_bash:
     name: Run Bash Linter
     runs-on: ubuntu-24.04
@@ -49,103 +73,3 @@ jobs:
       with:
         makefile_target: lint_bash
         setup_venv: false
-
-#   python_type_check:
-#     name: Python Type Check
-#     runs-on: [self-hosted, hardware]
-#     needs: prep_env_vars
-#     steps:
-#       - name: Checkout
-#         uses: actions/checkout@v4
-#         with:
-#           submodules: recursive
-#       - name: Generate
-#         run: bash hw-ops/scripts/ci_container.sh ${{ needs.prep_env_vars.outputs.ci_container_name }} ./ bash scripts/ci/gen_type_check.sh
-#       - name: Cleanup
-#         if: always()
-#         uses: ./hw-ops/.github/actions/cleanup
-
-#   python_unit_tests:
-#     name: Python Unit Tests
-#     needs: prep_env_vars
-#     uses: levven-com/hw-ops/.github/workflows/python-unit-tests.yml@ci_v12
-#     with:
-#       git_branch: ${{ needs.prep_env_vars.outputs.git_branch }}
-#       project_name: ${{ needs.prep_env_vars.outputs.project_name }}
-#       ci_container_name: ${{ needs.prep_env_vars.outputs.ci_container_name }}
-#     secrets: inherit
-
-#   sloccount:
-#     name: SLOC Count
-#     needs: prep_env_vars
-#     uses: levven-com/hw-ops/.github/workflows/sloccount.yml@ci_v12
-#     with:
-#       git_branch: ${{ needs.prep_env_vars.outputs.git_branch }}
-#       project_name: ${{ needs.prep_env_vars.outputs.project_name }}
-#       ci_container_name: ${{ needs.prep_env_vars.outputs.ci_container_name }}
-#       publish_metrics_branch: ${{ needs.prep_env_vars.outputs.pub_metrics_branch }}
-#     secrets: inherit
-
-#   lint_bash:
-#     name: Lint Bash
-#     needs: prep_env_vars
-#     runs-on: [self-hosted, hardware]
-#     steps:
-#       - name: Checkout
-#         uses: actions/checkout@v4
-#         with:
-#           submodules: recursive
-#       - name: Lint Bash
-#         run: bash hw-ops/scripts/ci_container.sh ${{ needs.prep_env_vars.outputs.ci_container_name }} ./ bash scripts/ci/gen_lintbash.sh
-#       - name: Cleanup
-#         if: always()
-#         uses: ./hw-ops/.github/actions/cleanup
-
-#   validate_build_number:
-#     name: Validate Build Number
-#     if: ${{ github.event_name == 'pull_request' }}
-#     needs: prep_env_vars
-#     runs-on: [self-hosted, hardware]
-#     steps:
-#       - name: Checkout
-#         uses: actions/checkout@v4
-#         with:
-#           submodules: recursive
-#       - name: Get Changed Files
-#         id: changed-files
-#         uses: tj-actions/changed-files@v46
-#         with:
-#           fail_on_submodule_diff_error: true
-#           fetch_additional_submodule_history: true
-#           files: |
-#             src/zeus/**
-#             scripts/**
-#             Makefile
-#             signflash/**
-#       - name: Validate Build Number
-#         if: steps.changed-files.outputs.any_changed == 'true'
-#         run: python3 scripts/ci/validate_version_diff.py
-#       - name: Cleanup
-#         if: always()
-#         uses: ./hw-ops/.github/actions/cleanup
-
-#   comments:
-#     name: Write PR Comment
-#     if: ${{ always() && github.event_name == 'pull_request' }}
-#     runs-on: [self-hosted, hardware]
-#     needs: [python_unit_tests]
-#     steps:
-#       - name: Hide Any Previous Comments
-#         uses: kanga333/comment-hider@v0.4.0
-#         with:
-#           github_token: ${{ secrets.GITHUB_TOKEN }}
-#           hide_reason: OUTDATED
-#       - name: Remaining Space
-#         uses: thollander/actions-comment-pull-request@v2
-#         with:
-#           message: |
-#             I analyzed the build output from commit ${{ github.event.pull_request.head.sha }} on ${{ env.GIT_BRANCH_NAME }}:
-#             |Language|Tests|Passed|Failed|Ignored|Total LoC|Covered LoC|Percent Covered|
-#             |:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
-#             |Python|${{needs.python_unit_tests.outputs.tests_run}}|${{needs.python_unit_tests.outputs.tests_passed}}|${{needs.python_unit_tests.outputs.tests_failed}}|N/A|${{needs.python_unit_tests.outputs.total_lines}}|${{needs.python_unit_tests.outputs.covered_lines}}|${{needs.python_unit_tests.outputs.percent_covered}}|
-#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
