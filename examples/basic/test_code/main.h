@@ -22,6 +22,14 @@ bool init_state_machine(void *user_param);
 
 void log_to_console(int level, const char *fmt, ...);
 
+void state_idle(void *user_param);
+
+void state_a(void *user_param);
+
+void state_b(void *user_param);
+
+void state_c(void *user_param);
+
 /*------------------------------------------------------------------------------
  UNIT TEST HELPER FUNCTIONS
  ------------------------------------------------------------------------------*/

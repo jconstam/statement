@@ -116,9 +116,32 @@ build_test_container: examples/Dockerfile.dev_c
 run_test_container:
 	@docker run -it --rm --mount src="${CURR_PATH}/examples/",target=/app,type=bind --name ${TEST_IMAGE_NAME} ${TEST_IMAGE_NAME}
 
+## build_examples: Builds all example projects.
+.PHONY: build_examples
+build_examples: build_example_basic
+
+## clean_examples: Cleans all example projects.
+.PHONY: clean_examples
+clean_examples: clean_example_basic
+
+## clobber_examples: Clobbers all example projects.
+.PHONY: clobber_examples
+clobber_examples: clobber_example_basic
+
 ## build_example_basic: Builds the basic example project.
 .PHONY: build_example_basic
 build_example_basic:
 	@echo "Building the basic example project..."
-	@docker run --rm --mount src="${CURR_PATH}/examples/",target=/app,type=bind --name ${TEST_IMAGE_NAME} ${TEST_IMAGE_NAME} make -C /app/basic clobber
 	@docker run --rm --mount src="${CURR_PATH}/examples/",target=/app,type=bind --name ${TEST_IMAGE_NAME} ${TEST_IMAGE_NAME} make -C /app/basic build
+
+## clean_example_basic: Cleans the basic example project.
+.PHONY: clean_example_basic
+clean_example_basic:
+	@echo "Cleaning the basic example project..."
+	@docker run --rm --mount src="${CURR_PATH}/examples/",target=/app,type=bind --name ${TEST_IMAGE_NAME} ${TEST_IMAGE_NAME} make -C /app/basic clean
+
+## clobber_example_basic: Clobbers the basic example project.
+.PHONY: clobber_example_basic
+clobber_example_basic:
+	@echo "Clobbering the basic example project..."
+	@docker run --rm --mount src="${CURR_PATH}/examples/",target=/app,type=bind --name ${TEST_IMAGE_NAME} ${TEST_IMAGE_NAME} make -C /app/basic clobber

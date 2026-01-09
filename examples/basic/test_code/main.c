@@ -7,6 +7,8 @@
 
 #include <stdarg.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 
 #include "basic_sm.h"
 
@@ -21,6 +23,11 @@
 /*------------------------------------------------------------------------------
  TYPES
  ------------------------------------------------------------------------------*/
+
+typedef struct
+{
+    int dummy;
+} basic_sm_data_t;
 
 /*------------------------------------------------------------------------------
  VARIABLES
@@ -38,13 +45,35 @@
  PUBLIC FUNCTIONS
  ------------------------------------------------------------------------------*/
 
-int main(int argc, char **argv)
+int main(void)
 {
+    basic_sm_data_t sm_data = {0};
+
+    log_to_console(BASIC_SM_LOG_LEVEL_INFO, "Starting state machine.");
+
+    if (!basic_sm__init(&sm_data))
+    {
+        log_to_console(BASIC_SM_LOG_LEVEL_ERROR, "State machine initialization failed.");
+        return -1;
+    }
+
+    for (int i = 0; i < 20; i++)
+    {
+        basic_sm__poll();
+    }
+
+    log_to_console(BASIC_SM_LOG_LEVEL_INFO, "State machine execution completed.");
+
     return 0;
 }
 
 bool init_state_machine(void *user_param)
 {
+    (void)user_param;
+
+    srand((unsigned int)time(NULL));
+
+    return true;
 }
 
 void log_to_console(int level, const char *fmt, ...)
@@ -55,6 +84,48 @@ void log_to_console(int level, const char *fmt, ...)
     vprintf(fmt, args);
     va_end(args);
     printf("\n");
+}
+
+void state_idle(void *user_param)
+{
+    (void)user_param;
+
+    basic_sm__transition__idle_to_a();
+}
+
+void state_a(void *user_param)
+{
+    (void)user_param;
+
+    if (rand() % 2 == 0)
+    {
+        basic_sm__transition__a_to_b();
+    }
+    else
+    {
+        basic_sm__transition__a_to_c();
+    }
+}
+
+void state_b(void *user_param)
+{
+    (void)user_param;
+
+    if (rand() % 2 == 0)
+    {
+        basic_sm__transition__b_to_idle();
+    }
+    else
+    {
+        basic_sm__transition__b_to_c();
+    }
+}
+
+void state_c(void *user_param)
+{
+    (void)user_param;
+
+    basic_sm__transition__c_to_idle();
 }
 
 /*------------------------------------------------------------------------------

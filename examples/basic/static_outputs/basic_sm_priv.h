@@ -14,6 +14,22 @@
  TYPES
  ------------------------------------------------------------------------------*/
 
+typedef enum
+{
+    BASIC_SM_STATE_IDLE,
+    BASIC_SM_STATE_A,
+    BASIC_SM_STATE_B,
+    BASIC_SM_STATE_C,
+
+    BASIC_SM_STATE_COUNT
+} basic_sm_state_t;
+
+typedef struct
+{
+    basic_sm_state_t curr_state;
+    void *user_param;
+} basic_sm_ctx_t;
+
 /*------------------------------------------------------------------------------
  PUBLIC FUNCTIONS
  ------------------------------------------------------------------------------*/

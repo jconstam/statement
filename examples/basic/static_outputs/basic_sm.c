@@ -7,11 +7,12 @@
 
 #include "basic_sm.h"
 #include "basic_sm_priv.h"
-#include "basic_sm_interface.h"
 
 /*------------------------------------------------------------------------------
  CONSTANTS
  ------------------------------------------------------------------------------*/
+
+#define LOG_HEADER "BASIC_SM: "
 
 /*------------------------------------------------------------------------------
  MACROS
@@ -25,13 +26,50 @@
  VARIABLES
  ------------------------------------------------------------------------------*/
 
+static basic_sm_ctx_t basic_sm_ctx = {0};
+
 /*------------------------------------------------------------------------------
  FORWARD DECLARATIONS
  ------------------------------------------------------------------------------*/
 
+/*!
+ * @brief Change the current state of the state machine.
+ * @param[in] new_state The new state to transition to.
+ */
+static void basic_sm__change_state(basic_sm_state_t new_state);
+
+/*!
+ * @brief Handles a transition from one state to another triggered by the user.
+ * @param[in] new_state The new state to transition to.
+ * @param[in] expected_current_state The current state expected before the transition.
+ */
+static void basic_sm__handle_transition(basic_sm_state_t new_state, basic_sm_state_t expected_current_state);
+
 /*------------------------------------------------------------------------------
  STATIC FUNCTIONS
  ------------------------------------------------------------------------------*/
+
+static void basic_sm__change_state(basic_sm_state_t new_state)
+{
+    if (new_state != basic_sm_ctx.curr_state)
+    {
+        basic_sm_interface__log(BASIC_SM_LOG_LEVEL_INFO, LOG_HEADER "State %d to state %d.", basic_sm_ctx.curr_state, new_state);
+
+        basic_sm_ctx.curr_state = new_state;
+    }
+}
+
+static void basic_sm__handle_transition(basic_sm_state_t new_state, basic_sm_state_t expected_current_state)
+{
+    if (basic_sm_ctx.curr_state == expected_current_state)
+    {
+        basic_sm__change_state(new_state);
+    }
+    else
+    {
+        basic_sm_interface__log(BASIC_SM_LOG_LEVEL_WARN, LOG_HEADER "Invalid transition from state %d to state %d attempted.", basic_sm_ctx.curr_state, new_state);
+    }
+}
 
 /*------------------------------------------------------------------------------
  PUBLIC FUNCTIONS
@@ -39,11 +77,71 @@
 
 bool basic_sm__init(void *user_param)
 {
-    if (!basic_sm__user_init(user_param))
+    if (!basic_sm_interface__user_init(user_param))
     {
-        basic_sm__log(BASIC_SM_LOG_LEVEL_ERROR, "User initialization failed.");
+        basic_sm_interface__log(BASIC_SM_LOG_LEVEL_ERROR, LOG_HEADER "User initialization failed.");
         return false;
     }
+
+    basic_sm_ctx.user_param = user_param;
+    basic_sm__change_state(BASIC_SM_STATE_IDLE);
+
+    basic_sm_interface__log(BASIC_SM_LOG_LEVEL_INFO, LOG_HEADER "Init Complete.");
+
+    return true;
+}
+
+void basic_sm__poll(void)
+{
+    switch (basic_sm_ctx.curr_state)
+    {
+    case BASIC_SM_STATE_IDLE:
+        basic_sm_interface__state_idle(basic_sm_ctx.user_param);
+        break;
+    case BASIC_SM_STATE_A:
+        basic_sm_interface__state_a(basic_sm_ctx.user_param);
+        break;
+    case BASIC_SM_STATE_B:
+        basic_sm_interface__state_b(basic_sm_ctx.user_param);
+        break;
+    case BASIC_SM_STATE_C:
+        basic_sm_interface__state_c(basic_sm_ctx.user_param);
+        break;
+    default:
+        basic_sm_interface__log(BASIC_SM_LOG_LEVEL_ERROR, LOG_HEADER "Invalid state %d.", basic_sm_ctx.curr_state);
+        basic_sm__change_state(BASIC_SM_STATE_IDLE);
+        break;
+    }
+}
+
+void basic_sm__transition__idle_to_a(void)
+{
+    basic_sm__handle_transition(BASIC_SM_STATE_A, BASIC_SM_STATE_IDLE);
+}
+
+void basic_sm__transition__a_to_b(void)
+{
+    basic_sm__handle_transition(BASIC_SM_STATE_B, BASIC_SM_STATE_A);
+}
+
+void basic_sm__transition__a_to_c(void)
+{
+    basic_sm__handle_transition(BASIC_SM_STATE_C, BASIC_SM_STATE_A);
+}
+
+void basic_sm__transition__b_to_idle(void)
+{
+    basic_sm__handle_transition(BASIC_SM_STATE_IDLE, BASIC_SM_STATE_B);
+}
+
+void basic_sm__transition__b_to_c(void)
+{
+    basic_sm__handle_transition(BASIC_SM_STATE_C, BASIC_SM_STATE_B);
+}
+
+void basic_sm__transition__c_to_idle(void)
+{
+    basic_sm__handle_transition(BASIC_SM_STATE_IDLE, BASIC_SM_STATE_C);
 }
 
 /*------------------------------------------------------------------------------

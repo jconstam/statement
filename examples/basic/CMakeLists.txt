@@ -7,6 +7,8 @@ set(PROJECT_NAME statement_example_basic)
 # Set project name
 project(${PROJECT_NAME} C)
 
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Werror -pedantic")
+
 set(SOURCES
     static_outputs/basic_sm.c
     test_code/main.c
