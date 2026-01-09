@@ -38,6 +38,11 @@ bool basic_sm__init(void *user_param);
 void basic_sm__poll(void);
 
 /*!
+ * @brief Cleanup the basic state machine.
+ */
+void basic_sm__cleanup(void);
+
+/*!
  * @brief Function to transition from state IDLE to state A.
  */
 void basic_sm__transition__idle_to_a(void);

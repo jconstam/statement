@@ -62,6 +62,8 @@ int main(void)
         basic_sm__poll();
     }
 
+    basic_sm__cleanup();
+
     log_to_console(BASIC_SM_LOG_LEVEL_INFO, "State machine execution completed.");
 
     return 0;

@@ -16,7 +16,7 @@ set(SOURCES
 
 include_directories(
     static_outputs
-    variable_outputs
+    interface
     test_code
 )
 

@@ -5,6 +5,8 @@
  INCLUDES
  ------------------------------------------------------------------------------*/
 
+#include <string.h>
+
 #include "basic_sm.h"
 #include "basic_sm_priv.h"
 
@@ -112,6 +114,13 @@ void basic_sm__poll(void)
         basic_sm__change_state(BASIC_SM_STATE_IDLE);
         break;
     }
+}
+
+void basic_sm__cleanup(void)
+{
+    memset(&basic_sm_ctx, 0, sizeof(basic_sm_ctx_t));
+
+    basic_sm_interface__log(BASIC_SM_LOG_LEVEL_INFO, LOG_HEADER "Cleanup Complete.");
 }
 
 void basic_sm__transition__idle_to_a(void)
