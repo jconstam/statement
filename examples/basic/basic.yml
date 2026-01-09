@@ -1,0 +1,7 @@
+name: basic_sm
+description: A basic state machine example.
+version: "1.0"
+author: Jason Constam
+infterfaces:
+  log: true
+  user_init: true

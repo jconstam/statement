@@ -7,6 +7,8 @@
         "ms-python.vscode-pylance",
         "ms-azuretools.vscode-containers",
         "mhutchie.git-graph",
-        "github.vscode-github-actions"
+        "github.vscode-github-actions",
+        "ms-vscode.cpptools-extension-pack",
+        "cschlosser.doxdocgen"
     ]
 }
