@@ -1,0 +1,14 @@
+FROM ubuntu:24.04
+
+LABEL maintainer="jconstam@gmail.com"
+LABEL version="1.0"
+LABEL description="A collection of tools for building test C programs for Statement."
+
+WORKDIR /app
+VOLUME ["/app"]
+
+# Install dependencies
+RUN apt-get update && apt-get install -y \
+    bash \
+    cmake \
+    build-essential

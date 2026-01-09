@@ -1,9 +1,11 @@
 ############# VARIABLES #############
 
+CURR_PATH=$(shell pwd)
 VENV_DIR=.venv
-VENV_PATH=$(shell pwd)/${VENV_DIR}
+VENV_PATH=${CURR_PATH}/${VENV_DIR}
 FORCE_SETUP_VENV=1
 USE_EXISTING_VENV=0
+TEST_IMAGE_NAME=statement_test
 
 ############# FUNCTIONS #############
 
@@ -104,3 +106,42 @@ test_ci: check_eof_newlines format_python_ci lint_python_ci lint_bash type_check
 	@$(call print_line)
 	@echo "All tests passed!"
 	@$(call print_line)
+
+## build_test_container: Builds the Docker container for testing.
+build_test_container: examples/Dockerfile.dev_c
+	@docker build --no-cache -f examples/Dockerfile.dev_c --tag ${TEST_IMAGE_NAME} examples
+
+## run_test_container: Runs the Docker container for testing.
+.PHONY: run_test_container
+run_test_container:
+	@docker run -it --rm --mount src="${CURR_PATH}/examples/",target=/app,type=bind --name ${TEST_IMAGE_NAME} ${TEST_IMAGE_NAME}
+
+## build_examples: Builds all example projects.
+.PHONY: build_examples
+build_examples: build_example_basic
+
+## clean_examples: Cleans all example projects.
+.PHONY: clean_examples
+clean_examples: clean_example_basic
+
+## clobber_examples: Clobbers all example projects.
+.PHONY: clobber_examples
+clobber_examples: clobber_example_basic
+
+## build_example_basic: Builds the basic example project.
+.PHONY: build_example_basic
+build_example_basic:
+	@echo "Building the basic example project..."
+	@docker run --rm --mount src="${CURR_PATH}/examples/",target=/app,type=bind --name ${TEST_IMAGE_NAME} ${TEST_IMAGE_NAME} make -C /app/basic build
+
+## clean_example_basic: Cleans the basic example project.
+.PHONY: clean_example_basic
+clean_example_basic:
+	@echo "Cleaning the basic example project..."
+	@docker run --rm --mount src="${CURR_PATH}/examples/",target=/app,type=bind --name ${TEST_IMAGE_NAME} ${TEST_IMAGE_NAME} make -C /app/basic clean
+
+## clobber_example_basic: Clobbers the basic example project.
+.PHONY: clobber_example_basic
+clobber_example_basic:
+	@echo "Clobbering the basic example project..."
+	@docker run --rm --mount src="${CURR_PATH}/examples/",target=/app,type=bind --name ${TEST_IMAGE_NAME} ${TEST_IMAGE_NAME} make -C /app/basic clobber
