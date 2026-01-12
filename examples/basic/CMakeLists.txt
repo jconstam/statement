@@ -11,13 +11,13 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Werror -pedantic")
 
 set(SOURCES
     static_outputs/basic_sm.c
-    test_code/main.c
+    application/main.c
 )
 
 include_directories(
     static_outputs
     interface
-    test_code
+    application
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})
