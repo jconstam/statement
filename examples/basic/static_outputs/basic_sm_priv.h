@@ -32,8 +32,8 @@ typedef enum
 
 typedef struct
 {
-    basic_sm_state_t curr_state;
-    void *user_param;
+    basic_sm_state_t curr_state; // cppcheck-suppress unusedStructMember
+    void *user_param;            // cppcheck-suppress unusedStructMember
 } basic_sm_ctx_t;
 
 /*------------------------------------------------------------------------------

@@ -26,7 +26,7 @@
 
 typedef struct
 {
-    int dummy;
+    int dummy; // cppcheck-suppress unusedStructMember
 } basic_sm_data_t;
 
 /*------------------------------------------------------------------------------
