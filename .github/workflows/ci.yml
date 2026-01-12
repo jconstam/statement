@@ -80,24 +80,18 @@ jobs:
         makefile_target: lint_bash
         setup_venv: false
 
-  build_examples:
-    name: Build Examples
+  build_basic_example:
+    name: Build Basic Example
     runs-on: ubuntu-24.04
     steps:
     - name: Checkout
       uses: actions/checkout@v6
-    - name: Build Docker Container
+    - name: Pull Docker Container
       uses: ./.github/actions/make_target
       with:
-        makefile_target: build_test_container
+        makefile_target: pull_test_container
         setup_venv: false
-    - name: Build Example - Basic
-      uses: ./.github/actions/make_target
+    - name: Basic Example
+      uses: ./.github/actions/build_example
       with:
-        makefile_target: build_example_basic
-        setup_venv: false
-    - name: Unit Test Example - Basic
-      uses: ./.github/actions/make_target
-      with:
-        makefile_target: unit_test_example_basic
-        setup_venv: false
+        example_name: basic

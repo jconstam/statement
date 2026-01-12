@@ -6,6 +6,7 @@ VENV_PATH=${CURR_PATH}/${VENV_DIR}
 FORCE_SETUP_VENV=1
 USE_EXISTING_VENV=0
 TEST_IMAGE_NAME=statement_test
+TEST_CONTAINER_NAME=jconstam/statement-dev-c
 CONTAINER_APP_DIR=/app
 BASIC_EXAMPLE_DIR=${CONTAINER_APP_DIR}/basic
 
@@ -114,13 +115,24 @@ test_ci: check_eof_newlines format_python_ci lint_python_ci lint_bash type_check
 	@$(call print_line)
 
 ## build_test_container: Builds the Docker container for testing.
-build_test_container: examples/Dockerfile.dev_c
-	@docker build --no-cache -f examples/Dockerfile.dev_c --tag ${TEST_IMAGE_NAME} examples
+.PHONY: build_test_container
+build_test_container:
+	@docker build --no-cache -f examples/Dockerfile.dev_c --tag ${TEST_CONTAINER_NAME} examples
+
+## push_test_container: Pushes the Docker container for testing to Docker Hub.
+.PHONY: push_test_container
+push_test_container: build_test_container
+	@docker push ${TEST_CONTAINER_NAME}:latest
+
+## pull_test_container: Pulls the Docker container for testing from Docker Hub.
+.PHONY: pull_test_container
+pull_test_container:
+	@docker pull ${TEST_CONTAINER_NAME}:latest
 
 ## run_test_container: Runs the Docker container for testing.
 .PHONY: run_test_container
 run_test_container:
-	@docker run -it --rm --mount src="${CURR_PATH}/examples/",target=${CONTAINER_APP_DIR},type=bind --name ${TEST_IMAGE_NAME} ${TEST_IMAGE_NAME}
+	@docker run -it --rm --mount src="${CURR_PATH}/examples/",target=${CONTAINER_APP_DIR},type=bind --name ${TEST_IMAGE_NAME} ${TEST_CONTAINER_NAME}
 
 ## build_examples: Builds all example projects.
 .PHONY: build_examples
