@@ -23,7 +23,7 @@ runs:
       uses: ./.github/actions/make_target
       with:
         makefile_target: validate_unit_test_coverage_example_${{ inputs.example_name }}
-        setup_venv: false
+        setup_venv: true
     - name: cppcheck
       uses: ./.github/actions/make_target
       with:
