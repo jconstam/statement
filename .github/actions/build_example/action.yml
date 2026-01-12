@@ -9,13 +9,23 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Build Example
+    - name: Build
       uses: ./.github/actions/make_target
       with:
         makefile_target: build_example_${{ inputs.example_name }}
         setup_venv: false
-    - name: Unit Test Example
+    - name: Unit Test
       uses: ./.github/actions/make_target
       with:
         makefile_target: unit_test_example_${{ inputs.example_name }}
+        setup_venv: false
+    - name: Validate Coverage
+      uses: ./.github/actions/make_target
+      with:
+        makefile_target: validate_unit_test_coverage_example_${{ inputs.example_name }}
+        setup_venv: false
+    - name: cppcheck
+      uses: ./.github/actions/make_target
+      with:
+        makefile_target: cppcheck_example_${{ inputs.example_name }}
         setup_venv: false
