@@ -24,22 +24,10 @@ typedef enum basic_sm_log_level
 } basic_sm_log_level_t;
 
 /*------------------------------------------------------------------------------
- UTILITY FUNCTIONS
+ MOCKED FUNCTIONS
  ------------------------------------------------------------------------------*/
 
-/**
- * @brief Logging interface for the state machine.
- *
- * @param[in] level   Log level (e.g., INFO, WARN, ERROR).
- * @param[in] fmt     Format string for the log message.
- * @param[in] ...     Additional arguments for the format string.
- */
-#define basic_sm_interface__log(level, fmt, ...) printf(level, fmt, ##__VA_ARGS__)
-
-/*------------------------------------------------------------------------------
- STATE FUNCTIONS
- ------------------------------------------------------------------------------*/
-
+void basic_sm_interface__log(basic_sm_log_level_t level, const char *msg);
 bool basic_sm_interface__user_init(void *user_param);
 void basic_sm_interface__state_idle(void *user_param);
 void basic_sm_interface__state_a(void *user_param);

@@ -5,6 +5,8 @@
  INCLUDES
  ------------------------------------------------------------------------------*/
 
+#include <stdarg.h>
+#include <stdio.h>
 #include <string.h>
 
 #include "basic_sm.h"
@@ -15,6 +17,7 @@
  ------------------------------------------------------------------------------*/
 
 #define LOG_HEADER "BASIC_SM: "
+#define LOG_BUFFER_SIZE (256U)
 
 /*------------------------------------------------------------------------------
  MACROS
@@ -35,6 +38,14 @@ static basic_sm_ctx_t basic_sm_ctx = {0};
  ------------------------------------------------------------------------------*/
 
 /*!
+ * @brief Print a log message.
+ * @param level The log level.
+ * @param fmt The format string.
+ * @param ... The arguments for the format string.
+ */
+static void basic_sm__print_log(basic_sm_log_level_t level, const char *fmt, ...);
+
+/*!
  * @brief Change the current state of the state machine.
  * @param[in] new_state The new state to transition to.
  */
@@ -51,11 +62,24 @@ static void basic_sm__handle_transition(basic_sm_state_t new_state, basic_sm_sta
  STATIC FUNCTIONS
  ------------------------------------------------------------------------------*/
 
+static void basic_sm__print_log(basic_sm_log_level_t level, const char *fmt, ...)
+{
+    char message[LOG_BUFFER_SIZE + 1U] = {0};
+    int header_size = snprintf(message, LOG_BUFFER_SIZE, LOG_HEADER);
+
+    va_list args;
+    va_start(args, fmt);
+    (void)vsnprintf(message, LOG_BUFFER_SIZE - header_size, fmt, args);
+    va_end(args);
+
+    basic_sm_interface__log(level, message);
+}
+
 static void basic_sm__change_state(basic_sm_state_t new_state)
 {
     if (new_state != basic_sm_ctx.curr_state)
     {
-        basic_sm_interface__log(BASIC_SM_LOG_LEVEL_INFO, LOG_HEADER "State %d to state %d.", basic_sm_ctx.curr_state, new_state);
+        basic_sm__print_log(BASIC_SM_LOG_LEVEL_INFO, "State %d to state %d.", basic_sm_ctx.curr_state, new_state);
 
         basic_sm_ctx.curr_state = new_state;
     }
@@ -69,7 +93,7 @@ static void basic_sm__handle_transition(basic_sm_state_t new_state, basic_sm_sta
     }
     else
     {
-        basic_sm_interface__log(BASIC_SM_LOG_LEVEL_WARN, LOG_HEADER "Invalid transition from state %d to state %d attempted.", basic_sm_ctx.curr_state, new_state);
+        basic_sm__print_log(BASIC_SM_LOG_LEVEL_WARN, "Invalid transition from state %d to state %d attempted.", basic_sm_ctx.curr_state, new_state);
     }
 }
 
@@ -81,14 +105,13 @@ bool basic_sm__init(void *user_param)
 {
     if (!basic_sm_interface__user_init(user_param))
     {
-        basic_sm_interface__log(BASIC_SM_LOG_LEVEL_ERROR, LOG_HEADER "User initialization failed.");
+        basic_sm__print_log(BASIC_SM_LOG_LEVEL_ERROR, "User initialization failed.");
         return false;
     }
 
     basic_sm_ctx.user_param = user_param;
     basic_sm__change_state(BASIC_SM_STATE_IDLE);
-
-    basic_sm_interface__log(BASIC_SM_LOG_LEVEL_INFO, LOG_HEADER "Init Complete.");
+    basic_sm__print_log(BASIC_SM_LOG_LEVEL_INFO, "Init Complete.");
 
     return true;
 }
@@ -110,7 +133,7 @@ void basic_sm__poll(void)
         basic_sm_interface__state_c(basic_sm_ctx.user_param);
         break;
     default:
-        basic_sm_interface__log(BASIC_SM_LOG_LEVEL_ERROR, LOG_HEADER "Invalid state %d.", basic_sm_ctx.curr_state);
+        basic_sm__print_log(BASIC_SM_LOG_LEVEL_ERROR, "Invalid state %d.", basic_sm_ctx.curr_state);
         basic_sm__change_state(BASIC_SM_STATE_IDLE);
         break;
     }
@@ -120,7 +143,7 @@ void basic_sm__cleanup(void)
 {
     memset(&basic_sm_ctx, 0, sizeof(basic_sm_ctx_t));
 
-    basic_sm_interface__log(BASIC_SM_LOG_LEVEL_INFO, LOG_HEADER "Cleanup Complete.");
+    basic_sm__print_log(BASIC_SM_LOG_LEVEL_INFO, "Cleanup Complete.");
 }
 
 void basic_sm__transition__idle_to_a(void)
@@ -156,6 +179,13 @@ void basic_sm__transition__c_to_idle(void)
 /*------------------------------------------------------------------------------
  UNIT TEST HELPER FUNCTIONS
  ------------------------------------------------------------------------------*/
+
+#ifdef UNIT_TEST
+basic_sm_ctx_t *basic_sm__test_helper__get_ctx(void)
+{
+    return &basic_sm_ctx;
+}
+#endif
 
 /*------------------------------------------------------------------------------
  END OF FILE

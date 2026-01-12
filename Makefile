@@ -174,4 +174,11 @@ clobber_example_basic:
 .PHONY: unit_test_example_basic
 unit_test_example_basic:
 	@echo "Unit testing the basic example project..."
-	@$(call run_in_docker,${BASIC_EXAMPLE_DIR},"ceedling gcov:all")
+	@$(call run_in_docker,${BASIC_EXAMPLE_DIR},"ceedling clobber gcov:all")
+
+## validate_unit_test_coverage_example_basic: Validates the unit test coverage of the basic example project.
+.PHONY: validate_unit_test_coverage_example_basic
+validate_unit_test_coverage_example_basic:
+	@bash ./scripts/check_xml_field.sh examples/basic/build_tests/artifacts/gcov/gcovr/coverage.xml "coverage.linerate" "1.0"
+	@bash ./scripts/check_xml_field.sh examples/basic/build_tests/artifacts/gcov/gcovr/coverage.xml "coverage.branchrate" "1.0"
+

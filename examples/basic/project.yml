@@ -46,7 +46,7 @@
     __va_list_tag: void
 
 :gcov:
-  :summaries: FALSE
+  :summaries: TRUE
   :reports:
     - HtmlDetailed
     - Cobertura

@@ -30,10 +30,9 @@ typedef enum
  * @brief Logging interface for the state machine.
  *
  * @param[in] level   Log level (e.g., INFO, WARN, ERROR).
- * @param[in] fmt     Format string for the log message.
- * @param[in] ...     Additional arguments for the format string.
+ * @param[in] msg     Format string for the log message.
  */
-#define basic_sm_interface__log(level, fmt, ...) log_to_console(level, fmt, ##__VA_ARGS__)
+#define basic_sm_interface__log(level, msg) log_to_console(level, msg)
 
 /*------------------------------------------------------------------------------
  STATE FUNCTIONS

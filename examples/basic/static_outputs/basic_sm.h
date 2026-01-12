@@ -82,6 +82,11 @@ void basic_sm__transition__c_to_idle(void);
  UNIT TEST HELPER FUNCTIONS
  ------------------------------------------------------------------------------*/
 
+#ifdef UNIT_TEST
+#include "basic_sm_priv.h"
+
+basic_sm_ctx_t *basic_sm__test_helper__get_ctx(void);
+#endif
 /*------------------------------------------------------------------------------
  END OF FILE
  ------------------------------------------------------------------------------*/
