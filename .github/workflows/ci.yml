@@ -91,6 +91,8 @@ jobs:
       with:
         makefile_target: pull_test_container
         setup_venv: false
+    - name: Install Dependencies
+      run: sudo bash ./scripts/install_dev_pre_reqs.sh
     - name: Basic Example
       uses: ./.github/actions/build_example
       with:
