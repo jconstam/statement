@@ -14,12 +14,21 @@ fi
 FIELD_PATH=$2
 EXPECTED_VALUE_STRING=$3
 
-COMMAND="cat \"${XML_FILE}\" | xq . | sed 's/@//' | sed 's/-//' | jq '.${FIELD_PATH}' | sed 's/\"//g'"
-FIELD_VALUE_STRING=$(eval ${COMMAND})
-if [ $? -ne 0 ]; then
+PARSE_COMMAND="cat \"${XML_FILE}\" | xq . | sed 's/@//' | sed 's/-//' | jq '.${FIELD_PATH}' | sed 's/\"//g'"
+FIELD_VALUE_STRING=$(eval "${PARSE_COMMAND}")
+PARSE_STATUS=$?
+if [ ${PARSE_STATUS} -ne 0 ]; then
     echo "Error: Failed to parse XML file '$XML_FILE'. Ensure 'jq' and 'xq' are installed."
     exit 1
-elif [ $(bc -l <<< "${EXPECTED_VALUE_STRING} - ${FIELD_VALUE_STRING}") == 0 ]; then
+fi
+
+COMPARE_COMMAND="bc -l <<< \"${EXPECTED_VALUE_STRING} - ${FIELD_VALUE_STRING}\""
+RESULT=$(eval "${COMPARE_COMMAND}")
+COMPARE_STATUS=$?
+if [ ${COMPARE_STATUS} -ne 0 ]; then
+    echo "Error: Comparison failed between expected value '$EXPECTED_VALUE_STRING' and field value '${FIELD_VALUE_STRING}'."
+    exit 1
+elif [ "${RESULT}" == 0 ]; then
     echo "Success: Field '$FIELD_PATH' has the expected value '$EXPECTED_VALUE_STRING'."
     exit 0
 else
