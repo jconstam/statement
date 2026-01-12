@@ -23,7 +23,7 @@ define print_line1
 endef
 
 define run_in_docker
-	@docker run --rm --mount src="${CURR_PATH}/examples/",target=${CONTAINER_APP_DIR},type=bind --workdir ${1} --name ${TEST_IMAGE_NAME} ${TEST_IMAGE_NAME} "${2}"
+	@docker run --rm --mount src="${CURR_PATH}/examples/",target=${CONTAINER_APP_DIR},type=bind --workdir ${1} --name ${TEST_IMAGE_NAME} ${TEST_CONTAINER_NAME} "${2}"
 endef
 
 ############# TARGETS #############
@@ -133,6 +133,12 @@ pull_test_container:
 .PHONY: run_test_container
 run_test_container:
 	@docker run -it --rm --mount src="${CURR_PATH}/examples/",target=${CONTAINER_APP_DIR},type=bind --name ${TEST_IMAGE_NAME} ${TEST_CONTAINER_NAME}
+
+## delete_test_container: Deletes the Docker container for testing.
+.PHONY: delete_test_container
+delete_test_container:
+	@docker rmi ${TEST_CONTAINER_NAME} || true
+	@docker system prune --force
 
 ## build_examples: Builds all example projects.
 .PHONY: build_examples
