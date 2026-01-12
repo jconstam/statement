@@ -96,3 +96,8 @@ jobs:
       with:
         makefile_target: build_example_basic
         setup_venv: false
+    - name: Unit Test Example - Basic
+      uses: ./.github/actions/make_target
+      with:
+        makefile_target: unit_test_example_basic
+        setup_venv: false

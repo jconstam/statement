@@ -6,6 +6,8 @@ VENV_PATH=${CURR_PATH}/${VENV_DIR}
 FORCE_SETUP_VENV=1
 USE_EXISTING_VENV=0
 TEST_IMAGE_NAME=statement_test
+CONTAINER_APP_DIR=/app
+BASIC_EXAMPLE_DIR=${CONTAINER_APP_DIR}/basic
 
 ############# FUNCTIONS #############
 
@@ -15,8 +17,12 @@ define setup_venv
 	@bash scripts/setup_venv.sh ${VENV_PATH} $($@_FORCE)
 endef
 
-define print_line
+define print_line1
 	@echo "========================================================================================="
+endef
+
+define run_in_docker
+	@docker run --rm --mount src="${CURR_PATH}/examples/",target=${CONTAINER_APP_DIR},type=bind --workdir ${1} --name ${TEST_IMAGE_NAME} ${TEST_IMAGE_NAME} "${2}"
 endef
 
 ############# TARGETS #############
@@ -114,7 +120,7 @@ build_test_container: examples/Dockerfile.dev_c
 ## run_test_container: Runs the Docker container for testing.
 .PHONY: run_test_container
 run_test_container:
-	@docker run -it --rm --mount src="${CURR_PATH}/examples/",target=/app,type=bind --name ${TEST_IMAGE_NAME} ${TEST_IMAGE_NAME}
+	@docker run -it --rm --mount src="${CURR_PATH}/examples/",target=${CONTAINER_APP_DIR},type=bind --name ${TEST_IMAGE_NAME} ${TEST_IMAGE_NAME}
 
 ## build_examples: Builds all example projects.
 .PHONY: build_examples
@@ -132,16 +138,22 @@ clobber_examples: clobber_example_basic
 .PHONY: build_example_basic
 build_example_basic:
 	@echo "Building the basic example project..."
-	@docker run --rm --mount src="${CURR_PATH}/examples/",target=/app,type=bind --name ${TEST_IMAGE_NAME} ${TEST_IMAGE_NAME} make -C /app/basic build
+	@$(call run_in_docker,${BASIC_EXAMPLE_DIR},"make build")
 
 ## clean_example_basic: Cleans the basic example project.
 .PHONY: clean_example_basic
 clean_example_basic:
 	@echo "Cleaning the basic example project..."
-	@docker run --rm --mount src="${CURR_PATH}/examples/",target=/app,type=bind --name ${TEST_IMAGE_NAME} ${TEST_IMAGE_NAME} make -C /app/basic clean
+	@$(call run_in_docker,${BASIC_EXAMPLE_DIR},"make clean")
 
 ## clobber_example_basic: Clobbers the basic example project.
 .PHONY: clobber_example_basic
 clobber_example_basic:
 	@echo "Clobbering the basic example project..."
-	@docker run --rm --mount src="${CURR_PATH}/examples/",target=/app,type=bind --name ${TEST_IMAGE_NAME} ${TEST_IMAGE_NAME} make -C /app/basic clobber
+	@$(call run_in_docker,${BASIC_EXAMPLE_DIR},"make clobber")
+
+## unit_test_example_basic: Builds the basic example project.
+.PHONY: unit_test_example_basic
+unit_test_example_basic:
+	@echo "Unit testing the basic example project..."
+	@$(call run_in_docker,${BASIC_EXAMPLE_DIR},"ceedling gcov:all")

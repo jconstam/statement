@@ -1,0 +1,80 @@
+---
+
+:project:
+  :use_exceptions: FALSE
+  :use_mocks: TRUE
+  :use_test_preprocessor: :all
+  :use_deep_dependencies: TRUE
+  :compile_threads: :auto
+  :test_threads: :auto
+  :build_root: ./build_tests
+  :test_file_prefix: test_
+  :which_ceedling: gem
+  :default_tasks:
+    - test:all
+
+:paths:
+  :source:
+    - application
+    - static_outputs
+  :include:
+    - application
+    - static_outputs
+  :test:
+    - unit_test
+  :support:
+    - unit_test/support
+
+:defines:
+  :test:
+    - UNIT_TEST
+
+:cmock:
+  :mock_prefix: mock_
+  :when_no_prototypes: :warn
+  :enforce_strict_ordering: TRUE
+  :plugins:
+    - :ignore
+    - :ignore_arg
+    - :expect_any_args
+    - :return_thru_ptr
+    - :callback
+    - :array
+  :treat_as_array:
+    va_list: void
+    __va_list: void
+    __va_list_tag: void
+
+:gcov:
+  :summaries: FALSE
+  :reports:
+    - HtmlDetailed
+    - Cobertura
+  :gcovr:
+    :html_artifact_filename: index.html
+    :html_medium_threshold: 80
+    :html_high_threshold: 100
+    :html_title: Basic Example Unit Test Coverage
+    :report_exclude: ".*vendor.*|.*build.*|.*test.*|.*lib.*"
+    :keep: FALSE
+    :delete: TRUE
+    :sort_uncovered: TRUE
+    :cobertura_artifact_filename: coverage.xml
+
+:tools:
+  :test_fixture:
+    :executable: valgrind
+    :name: 'Valgrind'
+    :arguments:
+      - --tool=memcheck
+      - --leak-check=yes
+      - --show-reachable=yes
+      - --xml=yes
+      - "--xml-file=build_tests/artifacts/test/`basename ${1}`.xml"
+      - "${1}"
+
+:plugins:
+  :enabled:
+    - gcov
+    - report_tests_pretty_stdout
+...

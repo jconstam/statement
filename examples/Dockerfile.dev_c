@@ -1,14 +1,24 @@
 FROM ubuntu:24.04
 
 LABEL maintainer="jconstam@gmail.com"
-LABEL version="1.0"
+LABEL version="1.1"
 LABEL description="A collection of tools for building test C programs for Statement."
 
 WORKDIR /app
 VOLUME ["/app"]
 
-# Install dependencies
 RUN apt-get update && apt-get install -y \
+    # Needed for some bash scripts
     bash \
-    cmake \
-    build-essential
+    # C development tools
+    cmake build-essential \
+    # Needed for ceedling
+    ruby-dev \
+    # Check for memory leaks in unit testing
+    valgrind \
+    # Unit test code coverage tool
+    gcovr
+
+RUN gem install \
+    # Unit test framework
+    ceedling
