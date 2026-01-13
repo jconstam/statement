@@ -20,9 +20,10 @@ fi
 echo "Using root path \"${ROOT_PATH}\""
 
 RESULT=0
-FILES=$(find . -type f -not -path '*/.*/*' -not -path '*/__pycache__/*' -not -name '.*')
+FILES=$(find . -type f -not -path '*/.*/*' -not -path '*/__pycache__/*' -not -path '*/build_tests/*' -not -path '*/build/*' -not -name '.*')
 for FILE in ${FILES}
 do
+    echo "Checking ${FILE}..."
     CHECK=$(tail -c 1 "${FILE}")
     WIDTH=$((COL - ${#FILE}))
     if [ "${CHECK}" != "" ]; then

@@ -1,0 +1,31 @@
+name: Build Example Project
+description: Build, runs, and unit tests the specified example project
+inputs:
+  example_name:
+    description: Name of the example to build
+    required: true
+    type: string
+
+runs:
+  using: "composite"
+  steps:
+    - name: Build
+      uses: ./.github/actions/make_target
+      with:
+        makefile_target: build_example_${{ inputs.example_name }}
+        setup_venv: false
+    - name: Unit Test
+      uses: ./.github/actions/make_target
+      with:
+        makefile_target: unit_test_example_${{ inputs.example_name }}
+        setup_venv: false
+    - name: Validate Coverage
+      uses: ./.github/actions/make_target
+      with:
+        makefile_target: validate_unit_test_coverage_example_${{ inputs.example_name }}
+        setup_venv: true
+    - name: cppcheck
+      uses: ./.github/actions/make_target
+      with:
+        makefile_target: cppcheck_example_${{ inputs.example_name }}
+        setup_venv: false

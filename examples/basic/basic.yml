@@ -1,0 +1,26 @@
+name: basic_sm
+description: A basic state machine example.
+version: "1.0"
+author: Jason Constam
+config:
+  do_logging: true
+  user_init: true
+infterfaces:
+  log: true
+  user_init: true
+states:
+  - name: Idle
+    start_state: true
+    transitions:
+      - to: A
+  - name: A
+    transitions:
+      - to: B
+      - to: C
+  - name: B
+    transitions:
+      - to: Idle
+      - to: C
+  - name: C
+    transitions:
+      - to: Idle

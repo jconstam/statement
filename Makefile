@@ -1,7 +1,10 @@
 ############# VARIABLES #############
 
+CURR_PATH=$(shell pwd)
 VENV_DIR=.venv
-VENV_PATH=$(shell pwd)/${VENV_DIR}
+VENV_PATH=${CURR_PATH}/${VENV_DIR}
+SCRIPTS_PATH=${CURR_PATH}/scripts
+EXAMPLES_PATH=${CURR_PATH}/examples
 FORCE_SETUP_VENV=1
 USE_EXISTING_VENV=0
 
@@ -20,7 +23,7 @@ endef
 ############# TARGETS #############
 
 ## help: Displays all available build targets.
-help: Makefile
+help: Makefile examples/Makefile
 	@echo
 	@echo " Choose a command:"
 	@echo
@@ -100,7 +103,23 @@ test_python:
 
 ## test_ci: Runs all CI tests including linters, type checker, and unit tests.
 .PHONY: test_ci
-test_ci: check_eof_newlines format_python_ci lint_python_ci lint_bash type_check_python test_python
+test_ci:
 	@$(call print_line)
+	@$(MAKE) check_eof_newlines
+	@$(MAKE) format_python_ci
+	@$(MAKE) lint_python_ci
+	@$(MAKE) lint_bash
+	@$(MAKE) type_check_python
+	@$(MAKE) test_python
+	@$(MAKE) clobber_examples
+	@$(MAKE) build_examples
+	@$(MAKE) cppcheck_examples
+	@$(MAKE) clangtidy_examples
+	@$(MAKE) unit_test_examples
+	@$(MAKE) validate_unit_test_coverage_examples
 	@echo "All tests passed!"
 	@$(call print_line)
+
+include examples/Makefile
+
+############# END OF FILE #############
