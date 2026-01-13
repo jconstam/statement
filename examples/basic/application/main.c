@@ -10,11 +10,16 @@
 #include <stdlib.h>
 #include <time.h>
 
+#include "main.h"
+
 #include "basic_sm.h"
+#include "basic_sm_interface.h"
 
 /*------------------------------------------------------------------------------
  CONSTANTS
  ------------------------------------------------------------------------------*/
+
+#define LOOP_COUNT (20)
 
 /*------------------------------------------------------------------------------
  MACROS
@@ -37,9 +42,20 @@ typedef struct
  FORWARD DECLARATIONS
  ------------------------------------------------------------------------------*/
 
+/*!
+ * @brief Makes a random choice of whether to take a branch or not.
+ * @return true for left, false for right.
+ */
+static bool left_or_right(void);
+
 /*------------------------------------------------------------------------------
  STATIC FUNCTIONS
  ------------------------------------------------------------------------------*/
+
+static bool left_or_right(void)
+{
+    return (rand() % 2 == 0); // NOLINT(cert-msc30-c,cert-msc50-cpp,concurrency-mt-unsafe)
+}
 
 /*------------------------------------------------------------------------------
  PUBLIC FUNCTIONS
@@ -57,7 +73,7 @@ int main(void)
         return -1;
     }
 
-    for (int i = 0; i < 20; i++)
+    for (int i = 0; i < LOOP_COUNT; i++)
     {
         basic_sm__poll();
     }
@@ -73,7 +89,7 @@ bool init_state_machine(void *user_param)
 {
     (void)user_param;
 
-    srand((unsigned int)time(NULL));
+    srand((unsigned int)time(NULL)); // NOLINT(cert-msc32-c,cert-msc51-cpp)
 
     return true;
 }
@@ -99,7 +115,7 @@ void state_a(void *user_param)
 {
     (void)user_param;
 
-    if (rand() % 2 == 0)
+    if (left_or_right())
     {
         basic_sm__transition__a_to_b();
     }
@@ -113,7 +129,7 @@ void state_b(void *user_param)
 {
     (void)user_param;
 
-    if (rand() % 2 == 0)
+    if (left_or_right())
     {
         basic_sm__transition__b_to_idle();
     }

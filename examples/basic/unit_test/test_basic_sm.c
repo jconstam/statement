@@ -6,6 +6,8 @@
  ------------------------------------------------------------------------------*/
 
 // System headers
+#include <stdlib.h>
+#include <string.h>
 
 // Unity's header
 #include "unity.h"
@@ -22,6 +24,8 @@
 /*------------------------------------------------------------------------------
  CONSTANTS
  ------------------------------------------------------------------------------*/
+
+#define DUMMY_FILL (0xFFU)
 
 /*------------------------------------------------------------------------------
  MACROS
@@ -127,21 +131,15 @@ void test__basic_sm__poll__invalid_state(void)
 
 void test__basic_sm__cleanup(void)
 {
-    memset(test_ctx, 0xFF, sizeof(basic_sm_ctx_t));
+    memset(test_ctx, DUMMY_FILL, sizeof(basic_sm_ctx_t));
     basic_sm_interface__log_Expect(BASIC_SM_LOG_LEVEL_INFO, "Cleanup Complete.");
     basic_sm__cleanup();
 
-    TEST_ASSERT_EQUAL(0, memcmp(test_ctx, &(basic_sm_ctx_t){0}, sizeof(basic_sm_ctx_t)));
+    basic_sm_ctx_t empty = {0};
+    TEST_ASSERT_EQUAL(empty.curr_state, test_ctx->curr_state);
+    TEST_ASSERT_EQUAL_PTR(empty.user_param, test_ctx->user_param);
 }
 
-void test__basic_sm__transition__idle_to_a__wrong_state(void)
-{
-    test_ctx->curr_state = BASIC_SM_STATE_B;
-    basic_sm_interface__log_Expect(BASIC_SM_LOG_LEVEL_WARN, "Invalid transition from state 2 to state 1 attempted.");
-    basic_sm__transition__idle_to_a();
-
-    TEST_ASSERT_EQUAL(BASIC_SM_STATE_B, test_ctx->curr_state);
-}
 void test__basic_sm__transition__idle_to_a(void)
 {
     test_ctx->curr_state = BASIC_SM_STATE_IDLE;
@@ -151,14 +149,6 @@ void test__basic_sm__transition__idle_to_a(void)
     TEST_ASSERT_EQUAL(BASIC_SM_STATE_A, test_ctx->curr_state);
 }
 
-void test__basic_sm__transition__a_to_b__wrong_state(void)
-{
-    test_ctx->curr_state = BASIC_SM_STATE_C;
-    basic_sm_interface__log_Expect(BASIC_SM_LOG_LEVEL_WARN, "Invalid transition from state 3 to state 2 attempted.");
-    basic_sm__transition__a_to_b();
-
-    TEST_ASSERT_EQUAL(BASIC_SM_STATE_C, test_ctx->curr_state);
-}
 void test__basic_sm__transition__a_to_b(void)
 {
     test_ctx->curr_state = BASIC_SM_STATE_A;
@@ -168,14 +158,6 @@ void test__basic_sm__transition__a_to_b(void)
     TEST_ASSERT_EQUAL(BASIC_SM_STATE_B, test_ctx->curr_state);
 }
 
-void test__basic_sm__transition__a_to_c__wrong_state(void)
-{
-    test_ctx->curr_state = BASIC_SM_STATE_IDLE;
-    basic_sm_interface__log_Expect(BASIC_SM_LOG_LEVEL_WARN, "Invalid transition from state 0 to state 3 attempted.");
-    basic_sm__transition__a_to_c();
-
-    TEST_ASSERT_EQUAL(BASIC_SM_STATE_IDLE, test_ctx->curr_state);
-}
 void test__basic_sm__transition__a_to_c(void)
 {
     test_ctx->curr_state = BASIC_SM_STATE_A;
@@ -185,14 +167,6 @@ void test__basic_sm__transition__a_to_c(void)
     TEST_ASSERT_EQUAL(BASIC_SM_STATE_C, test_ctx->curr_state);
 }
 
-void test__basic_sm__transition__b_to_idle__wrong_state(void)
-{
-    test_ctx->curr_state = BASIC_SM_STATE_A;
-    basic_sm_interface__log_Expect(BASIC_SM_LOG_LEVEL_WARN, "Invalid transition from state 1 to state 0 attempted.");
-    basic_sm__transition__b_to_idle();
-
-    TEST_ASSERT_EQUAL(BASIC_SM_STATE_A, test_ctx->curr_state);
-}
 void test__basic_sm__transition__b_to_idle(void)
 {
     test_ctx->curr_state = BASIC_SM_STATE_B;
@@ -202,14 +176,6 @@ void test__basic_sm__transition__b_to_idle(void)
     TEST_ASSERT_EQUAL(BASIC_SM_STATE_IDLE, test_ctx->curr_state);
 }
 
-void test__basic_sm__transition__b_to_c__wrong_state(void)
-{
-    test_ctx->curr_state = BASIC_SM_STATE_IDLE;
-    basic_sm_interface__log_Expect(BASIC_SM_LOG_LEVEL_WARN, "Invalid transition from state 0 to state 3 attempted.");
-    basic_sm__transition__b_to_c();
-
-    TEST_ASSERT_EQUAL(BASIC_SM_STATE_IDLE, test_ctx->curr_state);
-}
 void test__basic_sm__transition__b_to_c(void)
 {
     test_ctx->curr_state = BASIC_SM_STATE_B;
@@ -219,14 +185,6 @@ void test__basic_sm__transition__b_to_c(void)
     TEST_ASSERT_EQUAL(BASIC_SM_STATE_C, test_ctx->curr_state);
 }
 
-void test__basic_sm__transition__c_to_idle__wrong_state(void)
-{
-    test_ctx->curr_state = BASIC_SM_STATE_A;
-    basic_sm_interface__log_Expect(BASIC_SM_LOG_LEVEL_WARN, "Invalid transition from state 1 to state 0 attempted.");
-    basic_sm__transition__c_to_idle();
-
-    TEST_ASSERT_EQUAL(BASIC_SM_STATE_A, test_ctx->curr_state);
-}
 void test__basic_sm__transition__c_to_idle(void)
 {
     test_ctx->curr_state = BASIC_SM_STATE_C;

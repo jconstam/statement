@@ -1,6 +1,7 @@
 ############# VARIABLES #############
 
-BASIC_EXAMPLE_DIR=${CONTAINER_APP_DIR}/basic
+BASIC_EXAMPLE_PATH=${EXAMPLES_PATH}/basic
+BASIC_EXAMPLE_CONTAINER_PATH=${CONTAINER_APP_DIR}/basic
 TEST_IMAGE_NAME=statement_test
 TEST_CONTAINER_NAME=jconstam/statement-dev-c
 CONTAINER_APP_DIR=/app
@@ -65,6 +66,10 @@ validate_unit_test_coverage_examples: validate_unit_test_coverage_example_basic
 .PHONY: cppcheck_examples
 cppcheck_examples: cppcheck_example_basic
 
+## clangtidy_examples: Runs clang-tidy on all example projects.
+.PHONY: clangtidy_examples
+clangtidy_examples: clangtidy_example_basic
+
 ############# BASIC EXAMPLE TARGETS #############
 
 ## build_example_basic: Builds the basic example project.
@@ -72,39 +77,46 @@ cppcheck_examples: cppcheck_example_basic
 build_example_basic:
 	@$(call print_line)
 	@echo "Building the basic example project..."
-	@$(call run_in_docker,${BASIC_EXAMPLE_DIR},"make build")
+	@$(call run_in_docker,${BASIC_EXAMPLE_CONTAINER_PATH},"make build")
 
 ## clean_example_basic: Cleans the basic example project.
 .PHONY: clean_example_basic
 clean_example_basic:
 	@echo "Cleaning the basic example project..."
-	@$(call run_in_docker,${BASIC_EXAMPLE_DIR},"make clean")
+	@$(call run_in_docker,${BASIC_EXAMPLE_CONTAINER_PATH},"make clean")
 
 ## clobber_example_basic: Clobbers the basic example project.
 .PHONY: clobber_example_basic
 clobber_example_basic:
 	@echo "Clobbering the basic example project..."
-	@$(call run_in_docker,${BASIC_EXAMPLE_DIR},"make clobber")
+	@$(call run_in_docker,${BASIC_EXAMPLE_CONTAINER_PATH},"make clobber")
 
 ## unit_test_example_basic: Builds the basic example project.
 .PHONY: unit_test_example_basic
 unit_test_example_basic:
 	@$(call print_line)
 	@echo "Unit testing the basic example project..."
-	@$(call run_in_docker,${BASIC_EXAMPLE_DIR},"ceedling clobber gcov:all")
+	@$(call run_in_docker,${BASIC_EXAMPLE_CONTAINER_PATH},"ceedling clobber gcov:all")
 
 ## validate_unit_test_coverage_example_basic: Validates the unit test coverage of the basic example project.
 .PHONY: validate_unit_test_coverage_example_basic
 validate_unit_test_coverage_example_basic:
 	@$(call print_line)
-	@bash ./scripts/check_xml_field.sh examples/basic/build_tests/artifacts/gcov/gcovr/coverage.xml "coverage.linerate" "1.0"
-	@bash ./scripts/check_xml_field.sh examples/basic/build_tests/artifacts/gcov/gcovr/coverage.xml "coverage.branchrate" "1.0"
+	@bash ${SCRIPTS_PATH}/check_xml_field.sh examples/basic/build_tests/artifacts/gcov/gcovr/coverage.xml "coverage.linerate" "1.0"
+	@bash ${SCRIPTS_PATH}/check_xml_field.sh examples/basic/build_tests/artifacts/gcov/gcovr/coverage.xml "coverage.branchrate" "1.0"
 
 ## cppcheck_example_basic: Runs cppcheck on the basic example project.
 .PHONY: cppcheck_example_basic
 cppcheck_example_basic:
 	@$(call print_line)
 	@echo "Running cppcheck on the basic example project..."
-	@bash ./scripts/run_cppcheck.sh ./examples/basic/
+	@bash ${SCRIPTS_PATH}/run_cppcheck.sh ./examples/basic/
+
+## clangtidy_example_basic: Runs clang-tidy on the basic example project.
+.PHONY: clangtidy_example_basic
+clangtidy_example_basic:
+	@$(call print_line)
+	@echo "Running clang-tidy on the basic example project..."
+	@bash ${SCRIPTS_PATH}/run_clangtidy.sh ${CURR_PATH} ${SCRIPTS_PATH}/.clang-tidy ${BASIC_EXAMPLE_PATH}
 
 ############# END OF FILE #############
