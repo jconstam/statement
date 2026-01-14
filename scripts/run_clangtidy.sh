@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/bash
 
 if [ "$#" -ne 3 ]; then
     echo "Usage: $0 <root_path> <config_file_path> <project_path>"
