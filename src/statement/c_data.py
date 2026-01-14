@@ -7,11 +7,7 @@
 # Local modules
 
 
-class NoValuesError(Exception):
-    pass
-
-
-class NoFieldsError(Exception):
+class NoItemsError(Exception):
     pass
 
 
@@ -60,7 +56,7 @@ class CEnum(CData):
 
     def to_string(self) -> str:
         if not self._items:
-            raise NoValuesError(f'Cannot generate enum {self._name} with no values.  Use "add_data" to add values first.')
+            raise NoItemsError(f'Cannot generate enum {self._name} with no values.  Use "add_data" to add values first.')
         return self._print([(f"typedef enum {self.preamble}", 0), ("{", 0)], [("", 0), (f"{self.preamble}__COUNT", 1), (f"}} {self.preamble.lower()}_t;", 0)])
 
 
@@ -76,5 +72,5 @@ class CStruct(CData):
 
     def to_string(self) -> str:
         if not self._items:
-            raise NoFieldsError(f'Cannot generate struct {self._name} with no fields.  Use "add_field" to add fields first.')
+            raise NoItemsError(f'Cannot generate struct {self._name} with no fields.  Use "add_field" to add fields first.')
         return self._print([("typedef struct", 0), ("{", 0)], [(f"}} {self.preamble}_t;", 0)])

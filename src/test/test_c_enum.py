@@ -6,7 +6,7 @@
 import pytest
 
 # Local modules
-from statement.c_data import CData, CEnum, CStruct, NoValuesError, NoFieldsError
+from statement.c_data import CData, CEnum, CStruct, NoItemsError
 
 # Test modules
 
@@ -28,7 +28,7 @@ class TestCData:
 class TestCEnum:
     def test_no_values_error(self) -> None:
         enum = CEnum("testmodule", "testenum")
-        with pytest.raises(NoValuesError) as exc_info:
+        with pytest.raises(NoItemsError) as exc_info:
             _ = enum.to_string()
         assert str(exc_info.value) == 'Cannot generate enum testenum with no values.  Use "add_data" to add values first.'
 
@@ -59,7 +59,7 @@ class TestCEnum:
 class TestCStruct:
     def test_no_fields_error(self) -> None:
         struct = CStruct("testmodule", "teststruct")
-        with pytest.raises(NoFieldsError) as exc_info:
+        with pytest.raises(NoItemsError) as exc_info:
             _ = struct.to_string()
         assert str(exc_info.value) == 'Cannot generate struct teststruct with no fields.  Use "add_field" to add fields first.'
 
